@@ -38,7 +38,7 @@
     font-size: max(1vw,13px);
     border-radius: 50px;
 }
-..header-contents button{
+.header-contents button:hover{
     background-color: tomato;
     color: white;
 }
