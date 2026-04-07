@@ -36,3 +36,7 @@ hr{
   width: 82%;
   padding: 20px;
 }
+
+.cursor{
+  cursor: pointer;
+}
