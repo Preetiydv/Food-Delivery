@@ -28,7 +28,7 @@ const PlaceOrder = () => {
     event.preventDefault();
 
     let orderItems = [];
-    food_list.forEach((item)=>{
+    food_list.map((item)=>{
       if(cartItems[item._id]>0){
         let itemInfo = {...item};
         itemInfo["quantity"] = cartItems[item._id];
@@ -44,6 +44,8 @@ const PlaceOrder = () => {
     try{
     let response = await axios.post(url+"/api/order/place",orderData,{headers:{token}});
     if(response.data.success){
+      console.log("redirect_url:",response.data.session_url);
+      
       const {session_url} = response.data;
       window.location.replace(session_url);
     }
