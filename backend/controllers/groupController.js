@@ -44,4 +44,32 @@ const joinGroup = async (req,res) => {
     }
 };
 
-export { createGroup, joinGroup };
+const getGroup = async (req, res) => {
+    try {
+        const { groupId } = req.body;
+
+        const group = await groupModel.findOne({ groupId });
+
+        if (!group) {
+            return res.json({
+                success: false,
+                message: "Group not found"
+            });
+        }
+
+        res.json({
+            success: true,
+            group
+        });
+
+    } catch (error) {
+        console.log(error);
+        res.json({
+            success: false,
+            message: "Error"
+        });
+    }
+}
+
+
+export { createGroup, joinGroup, getGroup };

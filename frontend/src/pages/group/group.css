@@ -1,0 +1,22 @@
+.group-container {
+    padding: 40px;
+    text-align: center;
+}
+
+.group-container input {
+    padding: 10px;
+    width: 300px;
+    margin-right: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.group-container button {
+    padding: 10px 20px;
+    background: tomato;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin: 10px;
+}
