@@ -71,5 +71,40 @@ const getGroup = async (req, res) => {
     }
 }
 
+const addItemToGroup = async (req, res) => {
+    try {
+        const { groupId, item } = req.body;
 
-export { createGroup, joinGroup, getGroup };
+        const group = await groupModel.findOne({ groupId });
+
+        if (!group) {
+            return res.json({
+                success: false,
+                message: "Group not found"
+            });
+        }
+
+        group.items.push({
+            userId: req.userId,
+            itemId: item._id,
+            name: item.name,
+            quantity: 1,
+            price: item.price
+        });
+
+        await group.save();
+
+        res.json({
+            success: true,
+            message: "Item added to group cart",
+            group
+        });
+
+    } catch (error) {
+        console.log(error);
+        res.json({success: false,message: "Error"});
+    }
+};
+
+
+export { createGroup, joinGroup, getGroup,addItemToGroup };

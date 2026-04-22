@@ -8,7 +8,7 @@ const groupSchema = new mongoose.Schema({
         userId: String,
         itemId: String,
         name: String,
-        qunatity: Number,
+        quantity: Number,
         price: Number
     }],
     status: {type:String,default:"active"}
