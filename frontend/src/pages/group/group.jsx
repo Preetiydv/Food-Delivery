@@ -60,6 +60,10 @@ const Group = () => {
     }
   };
 
+
+  const totalAmount = groupDetails ?
+  groupDetails.items.reduce((total,item) => total+item.price*item.quantity,0) : 0;
+
   return (
     <div className="group-container">
       <h2>Group Order</h2>
@@ -109,7 +113,7 @@ const Group = () => {
             groupDetails.items.map((item, index) => (
               <div key={index}>
                 <p>
-                  {item.name} - ₹{item.price} x {item.quantity}
+                  {item.name} - ${item.price} x {item.quantity}
                 </p>
               </div>
             ))
@@ -118,6 +122,24 @@ const Group = () => {
           )}
         </div>
       )}
+
+      {
+        groupDetails && (
+          <div>
+            <h4>Split Bill</h4>
+            <p>
+              <b>Total Amount: </b> ${totalAmount}
+            </p>
+            <p>
+            <b>Members:</b> {groupDetails.members.length}
+            </p>
+            <p>
+              <b>Per Person:</b> ${Math.ceil(totalAmount/groupDetails.members.length)}
+            </p>
+          </div>
+        )
+      }
+
     </div>
   );
 };
