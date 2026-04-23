@@ -1,37 +1,49 @@
-import React from 'react'
-import './verify.css'
-import { useNavigate, useSearchParams } from 'react-router-dom'
-import { useContext } from 'react';
-import { StoreContext } from '../../Context/StoreContext';
-import axios from 'axios';
-import { useEffect } from 'react';
+import React from "react";
+import "./verify.css";
+import { useNavigate, useSearchParams } from "react-router-dom";
+import { useContext } from "react";
+import { StoreContext } from "../../Context/StoreContext";
+import axios from "axios";
+import { useEffect } from "react";
 
 const Verify = () => {
+  const [searchParams, setSearchParams] = useSearchParams();
+  const success = searchParams.get("success");
+  const orderId = searchParams.get("orderId");
+  const { url } = useContext(StoreContext);
+  const navigate = useNavigate();
 
-    const [searchParams,setSearchParams] = useSearchParams();
-    const success = searchParams.get("success");
-    const orderId = searchParams.get("orderId");
-    const {url} = useContext(StoreContext);
-    const navigate = useNavigate();
+  const verifyPayment = async () => {
+    const response = await axios.post(url + "/api/order/verify", {success, orderId,});   
+    if (response.data.success) {
+      const groupId = localStorage.getItem("groupId");
 
-    const verifyPayment = async () => {
-        const response = await axios.post(url+"/api/order/verify",{success,orderId});
-        if(response.data.success){
-             navigate("/myOrders");
-        }
-        else{
-            navigate("/")
-        }
+      if (groupId) {
+        await axios.post(
+          url + "/api/group/place-order",
+          { groupId },
+          { headers: {token: localStorage.getItem("token")}}
+          
+        );
+
+        localStorage.removeItem("groupId");
+      }
+      navigate("/myOrders");
+    } else {
+      navigate("/");
     }
-    useEffect(()=>{
-        verifyPayment();
-    },[]);
+  }; 
+    
+    
+  useEffect(() => {
+    verifyPayment();
+  }, []);
 
   return (
-    <div className='verify'>
+    <div className="verify">
       <div className="spinner"></div>
     </div>
-  )
-}
+  );
+};
 
-export default Verify
+export default Verify;

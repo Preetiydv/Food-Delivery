@@ -106,5 +106,22 @@ const addItemToGroup = async (req, res) => {
     }
 };
 
+const placeGroupOrder = async (req,res) => {
+    try {
+        const {groupId} = req.body;
+        const group = await groupModel.findOne({groupId});
+        if(!group){
+            return res.json({success:false,message:'Group not found'});
 
-export { createGroup, joinGroup, getGroup,addItemToGroup };
+        }
+        group.status = "Completed";
+        await group.save();
+        res.json({success:true,message:"Group Order placed successfully",group});
+    } catch (error) {
+        console.log(error);
+        res.json({success:false,message:"Error placing group order"});
+    }
+};
+
+
+export { createGroup, joinGroup, getGroup,addItemToGroup, placeGroupOrder };

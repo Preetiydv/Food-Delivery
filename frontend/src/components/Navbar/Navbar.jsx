@@ -27,6 +27,9 @@ const Navbar = ({setShowLogin}) => {
         <a href='#explore-menu' onClick={()=>setMenu("Menu")} className={menu==="Menu"?"active":""}>Menu</a>
         <a href='#app-download' onClick={()=>setMenu("Mobile-app")} className={menu==="Mobile-app"?"active":""}>Mobile-app</a>
         <a href='#footer' onClick={()=>setMenu("Contact us")} className={menu==="Contact us"?"active":""}>Contact us</a>
+        <Link to='/group' onClick={()=>setMenu("Group Order")} className={menu==="Group Order"?"active":""} >
+        Group Order
+        </Link>
       </ul>
       <div className='navbar-right'>
         <img src={assets.search_icon} alt="" />

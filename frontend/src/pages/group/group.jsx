@@ -2,19 +2,20 @@ import React from "react";
 import "./group.css";
 import { useContext } from "react";
 import { StoreContext } from "../../Context/StoreContext";
+import { useNavigate } from "react-router-dom";
 import { useState } from "react";
+
 import axios from "axios";
 
 const Group = () => {
   const { url, token } = useContext(StoreContext);
+  const navigate = useNavigate();
   const [groupId, setGroupId] = useState("");
   const [createdGroupId, setCreatedGroupId] = useState("");
   const [groupDetails, setGroupDetails] = useState(null);
 
   //create group
   const createGroup = async () => {
-    console.log("Created Group Clicked");
-
     const response = await axios.post(
       url + "/api/group/create",
       {},
@@ -60,9 +61,18 @@ const Group = () => {
     }
   };
 
+  // place group order
+ const proceedToCheckout = () => {
+  localStorage.setItem("groupId", groupId);
+  navigate("/order");
+};
 
-  const totalAmount = groupDetails ?
-  groupDetails.items.reduce((total,item) => total+item.price*item.quantity,0) : 0;
+  const totalAmount = groupDetails
+    ? groupDetails.items.reduce(
+        (total, item) => total + item.price * item.quantity,
+        0,
+      )
+    : 0;
 
   return (
     <div className="group-container">
@@ -90,13 +100,17 @@ const Group = () => {
       <button onClick={joinGroup}> Join </button>
 
       {groupDetails && (
-        <div>
+        <div className="group-details-box">
           <h3>Group Details</h3>
           <p>
             <b>Host:</b> {groupDetails.host}{" "}
           </p>
           <p>
             <b>Total Members:</b> {groupDetails.members.length}
+          </p>
+          <p>
+            <b>Status:</b>
+            {groupDetails.status}
           </p>
           <h4>Members</h4>
           {groupDetails.members.map((member, index) => (
@@ -106,7 +120,7 @@ const Group = () => {
       )}
 
       {groupDetails && (
-        <div>
+        <div className="shared-cart-box">
           <h4>Shared Group Cart</h4>
 
           {groupDetails.items.length > 0 ? (
@@ -123,23 +137,32 @@ const Group = () => {
         </div>
       )}
 
-      {
-        groupDetails && (
-          <div>
-            <h4>Split Bill</h4>
-            <p>
-              <b>Total Amount: </b> ${totalAmount}
-            </p>
-            <p>
+      {groupDetails && (
+        <div className="split-bill-box">
+          <h4>Split Bill</h4>
+          <p>
+            <b>Total Amount: </b> ${totalAmount}
+          </p>
+          <p>
             <b>Members:</b> {groupDetails.members.length}
-            </p>
-            <p>
-              <b>Per Person:</b> ${Math.ceil(totalAmount/groupDetails.members.length)}
-            </p>
-          </div>
-        )
-      }
+          </p>
+          <p>
+            <b>Per Person:</b> $
+            {Math.ceil(totalAmount / groupDetails.members.length)}
+          </p>
+        </div>
+      )}
 
+      {groupDetails && (
+        <button
+          onClick={proceedToCheckout}
+          disabled={groupDetails?.status === "completed"}>
+        
+          {groupDetails?.status === "completed"
+            ? "Order Completed"
+            : "Proceed to Checkout"}
+        </button>
+      )}
     </div>
   );
 };
