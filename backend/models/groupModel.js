@@ -3,7 +3,13 @@ import mongoose from "mongoose";
 const groupSchema = new mongoose.Schema({
     groupId: {type:String,required:true,unique:true},
     host: {type:String,required:true}, 
-    members: [{type:String}], 
+    members: [
+        {
+            userId: {type: String},
+            name: {type: String},
+            paymentStatus: {type: String, default: "Pending"}
+        }
+    ], 
     items: [{
         userId: String,
         itemId: String,

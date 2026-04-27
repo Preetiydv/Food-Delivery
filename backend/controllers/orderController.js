@@ -1,6 +1,7 @@
 import { CurrencyCodes } from "validator/lib/isISO4217.js";
 import orderModel from "../models/orderModel.js";
 import userModel from "../models/userModel.js";
+import groupModel from "../models/groupModel.js";
 import Stripe from "stripe"
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY)
@@ -68,6 +69,19 @@ const verifyOrder = async (req,res) => {
     try {
         if(success==="true"){
             await orderModel.findByIdAndUpdate(orderId,{payment:true});
+            const groupId = req.body.groupId;
+            if(groupId){
+                const group = await groupModel.findOne({groupId});
+            
+            if(group){
+                const member = group.members.find(member => member.userId === req.userId);
+                if(member){
+                    member.paymentStatus = "Paid";
+                    await group.save();
+                }
+            }
+        }
+
             res.json({success:true,message:"Paid"})
         }
         else{

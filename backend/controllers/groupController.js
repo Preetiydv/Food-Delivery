@@ -12,7 +12,11 @@ const createGroup = async (req, res) => {
     const group = new groupModel({
       groupId,
       host: user.name,
-      members: [req.userId],
+      members: [{
+        userId: req.userId,
+        name: user.name,
+        paymentStatus: "Pending"
+      }],
       items: [],
     });
     await group.save();
@@ -34,8 +38,14 @@ const joinGroup = async (req, res) => {
       return res.json({ success: false, message: "Group not found" });
     }
 
-    if (!group.members.includes(req.userId)) {
-      group.members.push(req.userId);
+    const user = await userModel.findById(req.userId);
+    const alreadyJoined = group.members.some(member => member.userId === req.userId);
+    if(!alreadyJoined){
+      group.members.push({
+        userId: req.userId,
+        name: user.name,
+        paymentStatus: "Pending"
+      });
       await group.save();
     }
 
@@ -113,7 +123,7 @@ const placeGroupOrder = async (req, res) => {
     if (!group) {
       return res.json({ success: false, message: "Group not found" });
     }
-    group.status = "Completed";
+    group.status = "completed";
     await group.save();
     res.json({
       success: true,

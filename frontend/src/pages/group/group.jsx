@@ -63,7 +63,7 @@ const Group = () => {
 
   // place group order
  const proceedToCheckout = () => {
-  localStorage.setItem("groupId", groupId);
+  localStorage.setItem("groupId", groupDetails.groupId);
   navigate("/order");
 };
 
@@ -114,7 +114,7 @@ const Group = () => {
           </p>
           <h4>Members</h4>
           {groupDetails.members.map((member, index) => (
-            <p key={index}>{member}</p>
+            <p key={index}>{member.name} : {member.paymentStatus}</p>
           ))}
         </div>
       )}

@@ -14,27 +14,29 @@ const Verify = () => {
   const navigate = useNavigate();
 
   const verifyPayment = async () => {
-    const response = await axios.post(url + "/api/order/verify", {success, orderId,});   
-    if (response.data.success) {
-      const groupId = localStorage.getItem("groupId");
+    const groupId = localStorage.getItem("groupId");
 
-      if (groupId) {
-        await axios.post(
-          url + "/api/group/place-order",
-          { groupId },
-          { headers: {token: localStorage.getItem("token")}}
-          
-        );
-
-        localStorage.removeItem("groupId");
+    const response = await axios.post(
+      url + "/api/order/verify",
+      {
+        success,
+        orderId,
+        groupId,
+      },
+      {
+        headers: {
+          token: localStorage.getItem("token")
+        }
       }
+    );
+    if (response.data.success) {
+      localStorage.removeItem("groupId");
       navigate("/myOrders");
     } else {
       navigate("/");
     }
-  }; 
-    
-    
+  };
+
   useEffect(() => {
     verifyPayment();
   }, []);
