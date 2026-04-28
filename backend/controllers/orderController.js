@@ -74,7 +74,7 @@ const verifyOrder = async (req,res) => {
                 const group = await groupModel.findOne({groupId});
             
             if(group){
-                const member = group.members.find(member => member.userId === req.userId);
+                const member = group.members.find(member => member.userId.toString() === req.userId.toString());
                 if(member){
                     member.paymentStatus = "Paid";
                     await group.save();
