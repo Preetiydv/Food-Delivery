@@ -98,15 +98,28 @@ const Group = () => {
           Your Group ID: <b>{createdGroupId}</b>
           {inviteLink && (
             <div className="invite-box">
-              <p>Invite Link Ready </p>
-              <button
-                onClick={() => {
-                  navigator.clipboard.writeText(inviteLink);
-                  alert("Invite Link Copied!");
-                }}
-              >
-                Copy Invite Link
-              </button>
+              <p>Invite Link Ready</p>
+
+              <div className="invite-buttons">
+                <button
+                  onClick={() => {
+                    navigator.clipboard.writeText(inviteLink);
+                    alert("Invite Link Copied!");
+                  }}
+                >
+                  Copy Link
+                </button>
+
+                <button
+                  onClick={() => {
+                    const message = `Join my group food order on Tomato \n\nClick here: ${inviteLink}`;
+                    const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(message)}`;
+                    window.open(whatsappUrl, "_blank");
+                  }}
+                >
+                  WhatsApp Share
+                </button>
+              </div>
             </div>
           )}
         </p>
