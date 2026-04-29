@@ -1,8 +1,8 @@
-import React from "react";
+import React, { useEffect } from "react";
 import "./group.css";
 import { useContext } from "react";
 import { StoreContext } from "../../Context/StoreContext";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { useState } from "react";
 
 import axios from "axios";
@@ -10,9 +10,18 @@ import axios from "axios";
 const Group = () => {
   const { url, token } = useContext(StoreContext);
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const [groupId, setGroupId] = useState("");
   const [createdGroupId, setCreatedGroupId] = useState("");
+  const [inviteLink, setInviteLink] = useState("");
   const [groupDetails, setGroupDetails] = useState(null);
+
+  useEffect(() => {
+    const urlGroupId = searchParams.get("groupId");
+    if (urlGroupId) {
+      setGroupId(urlGroupId);
+    }
+  }, []);
 
   //create group
   const createGroup = async () => {
@@ -23,7 +32,10 @@ const Group = () => {
     );
     if (response.data.success) {
       setCreatedGroupId(response.data.groupId);
-      alert("Group Created Successfully");
+      const newInviteLink = `http://localhost:5173/group?groupId=${response.data.groupId}`;
+
+      setInviteLink(newInviteLink);
+      navigator.clipboard.writeText(newInviteLink);
     } else {
       alert("Error creating group");
     }
@@ -62,10 +74,10 @@ const Group = () => {
   };
 
   // place group order
- const proceedToCheckout = () => {
-  localStorage.setItem("groupId", groupDetails.groupId);
-  navigate("/order");
-};
+  const proceedToCheckout = () => {
+    localStorage.setItem("groupId", groupDetails.groupId);
+    navigate("/order");
+  };
 
   const totalAmount = groupDetails
     ? groupDetails.items.reduce(
@@ -84,6 +96,19 @@ const Group = () => {
         <p>
           {" "}
           Your Group ID: <b>{createdGroupId}</b>
+          {inviteLink && (
+            <div className="invite-box">
+              <p>Invite Link Ready </p>
+              <button
+                onClick={() => {
+                  navigator.clipboard.writeText(inviteLink);
+                  alert("Invite Link Copied!");
+                }}
+              >
+                Copy Invite Link
+              </button>
+            </div>
+          )}
         </p>
       )}
       <hr />
@@ -114,7 +139,9 @@ const Group = () => {
           </p>
           <h4>Members</h4>
           {groupDetails.members.map((member, index) => (
-            <p key={index}>{member.name} : {member.paymentStatus}</p>
+            <p key={index}>
+              {member.name} : {member.paymentStatus}
+            </p>
           ))}
         </div>
       )}
@@ -156,8 +183,8 @@ const Group = () => {
       {groupDetails && (
         <button
           onClick={proceedToCheckout}
-          disabled={groupDetails?.status === "completed"}>
-        
+          disabled={groupDetails?.status === "completed"}
+        >
           {groupDetails?.status === "completed"
             ? "Order Completed"
             : "Proceed to Checkout"}
